@@ -1,0 +1,33 @@
+# Qt Creator local settings
+*.pro.user
+*.pro.user.*
+
+# Build directories
+/build/
+/build-*/
+/debug/
+/release/
+
+# qmake generated files
+.qmake.cache
+.qmake.stash
+Makefile
+Makefile.*
+object_script.*
+
+# Qt generated sources and headers
+moc_*.cpp
+moc_*.h
+qrc_*.cpp
+ui_*.h
+
+# Compiler and linker output
+*.o
+*.obj
+*.exe
+*.dll
+*.a
+*.lib
+*.pdb
+*.ilk
+*.idb
