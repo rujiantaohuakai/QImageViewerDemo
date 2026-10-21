@@ -300,10 +300,13 @@ void MainWindow::on_actDockFloat_triggered(bool checked)
 
 bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 {
-    if (watched == ui->labPic &&
-        event->type() == QEvent::Wheel &&
-        !m_pixmap.isNull()) {
+    if (watched == ui->labPic && event->type() == QEvent::Wheel) {
         QWheelEvent *wheelEvent = static_cast<QWheelEvent *>(event);
+
+        // 未按ctrl或者没有图片，保留默认滚动行为
+        if (!wheelEvent->modifiers().testFlag(Qt::ControlModifier) || m_pixmap.isNull())
+            return QMainWindow::eventFilter(watched, event);
+
         const int delta = wheelEvent->angleDelta().y();
 
         if (delta > 0) {
