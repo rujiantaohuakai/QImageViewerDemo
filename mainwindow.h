@@ -30,6 +30,9 @@ private:
     void displayImage(QTreeWidgetItem *item);
     void changeItemCaption(QTreeWidgetItem *item);
     void deleteItem(QTreeWidgetItem *parItem, QTreeWidgetItem *item);
+
+protected:
+    bool eventFilter(QObject *watched, QEvent *event) override;
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();

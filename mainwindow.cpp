@@ -2,13 +2,14 @@
 #include "ui_mainwindow.h"
 
 #include <QFileDialog>
-
+#include <QWheelEvent>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->labPic->installEventFilter(this);
 
     labNodeText = new QLabel("节点标题", this);
     labNodeText->setMinimumWidth(200);
@@ -25,9 +26,15 @@ MainWindow::MainWindow(QWidget *parent)
     labFileName = new QLabel("文件名", this);
     ui->statusBar->addWidget(labFileName);
 
+    ui->actAddFolder->setEnabled(false);
+    ui->actAddFiles->setEnabled(false);
+    ui->actDeleteItem->setEnabled(false);
+
     buildTreeHeader();
     iniTree();
     setCentralWidget(ui->scrollArea);
+
+
 }
 
 MainWindow::~MainWindow()
@@ -146,6 +153,7 @@ void MainWindow::deleteItem(QTreeWidgetItem *parItem, QTreeWidgetItem *item)
     delete item;
 }
 
+
 void MainWindow::on_actAddFolder_triggered()
 {
     // 添加目录
@@ -250,7 +258,7 @@ void MainWindow::on_actZoomIn_triggered()
 
 void MainWindow::on_actZoomOut_triggered()
 {
-    m_ratio = m_ratio * 0.8;
+    m_ratio = m_ratio / 1.2f;
     spinRatio->setValue(100 * m_ratio);
     int w = m_ratio * m_pixmap.width();
     int h = m_ratio * m_pixmap.height();
@@ -289,3 +297,28 @@ void MainWindow::on_actDockFloat_triggered(bool checked)
     ui->dockWidget->setFloating(checked);
 }
 
+
+bool MainWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == ui->labPic &&
+        event->type() == QEvent::Wheel &&
+        !m_pixmap.isNull()) {
+        QWheelEvent *wheelEvent = static_cast<QWheelEvent *>(event);
+        const int delta = wheelEvent->angleDelta().y();
+
+        if (delta > 0) {
+            on_actZoomIn_triggered();
+        }
+        else if (delta < 0) {
+            on_actZoomOut_triggered();
+        }
+        else {
+            return QMainWindow::eventFilter(watched, event);
+        }
+
+        wheelEvent->accept();
+        return true;
+    }
+
+    return QMainWindow::eventFilter(watched, event);
+}
